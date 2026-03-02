@@ -1,0 +1,11 @@
+{
+  "items": [
+    {
+      "title": "Sản phẩm mẫu",
+      "price": 199000,
+      "stock": 10,
+      "image": "",
+      "desc": "Mô tả sản phẩm"
+    }
+  ]
+}
