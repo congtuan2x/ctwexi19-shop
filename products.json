@@ -1,11 +1,18 @@
 {
   "items": [
     {
-      "title": "Sản phẩm mẫu",
+      "title": "CAPCUT PRO 1 THÁNG",
       "price": 199000,
       "stock": 10,
-      "image": "",
+      "image": "/assets/uploads/b652044e32441808ae3c8fa8d12b9f9a.jpg",
       "desc": "Mô tả sản phẩm"
+    },
+    {
+      "title": "sfg",
+      "price": 13333,
+      "stock": 33,
+      "desc": "1saffsa",
+      "image": "/assets/uploads/qrcode-1772367865136.png"
     }
   ]
 }
