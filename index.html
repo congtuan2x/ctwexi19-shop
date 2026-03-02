@@ -1,0 +1,1684 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Modern Shop • QR Transfer • Accounts</title>
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --panel:#121a27;
+      --panel2:#0f1624;
+      --text:#e7eef7;
+      --muted:#9aa6b2;
+      --border: rgba(255,255,255,.10);
+      --brand:#4f8cff;
+      --ok:#22c55e;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+      --shadow: 0 18px 50px rgba(0,0,0,.45);
+      --r: 18px;
+      --max: 1120px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      --gridGap: 14px;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0; font-family:var(--font); color:var(--text);
+      background:
+        radial-gradient(1000px 600px at 10% -10%, rgba(79,140,255,.25), transparent 60%),
+        radial-gradient(900px 650px at 90% 10%, rgba(34,197,94,.14), transparent 55%),
+        var(--bg);
+      line-height:1.45;
+    }
+    a{ color:inherit; text-decoration:none; }
+    .container{ max-width:var(--max); margin:0 auto; padding:18px 16px 70px; }
+
+    /* Topbar */
+    .topbar{
+      position:sticky; top:12px; z-index:10;
+      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+      padding:14px 14px;
+      border:1px solid var(--border);
+      border-radius: var(--r);
+      background: rgba(18,26,39,.62);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      min-width: 280px;
+    }
+    .logoBox{
+      width:40px;height:40px;border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.20);
+      overflow:hidden;
+      display:flex; align-items:center; justify-content:center;
+      flex: 0 0 auto;
+    }
+    .logoBox img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .logoFallback{
+      width:100%; height:100%;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:900; color: rgba(255,255,255,.8);
+      background: linear-gradient(135deg, rgba(79,140,255,.18), rgba(255,255,255,.04));
+    }
+    .brand h1{ margin:0; font-size:15px; letter-spacing:.2px; }
+    .brand small{ display:block; margin-top:2px; font-size:12px; color:var(--muted); }
+
+    .actions{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
+    .input,.btn,select,textarea{
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.10);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius: 14px;
+      outline:none;
+      font-size:14px;
+    }
+    .input{ min-width: 220px; }
+    textarea{ width:100%; min-height:90px; resize:vertical; }
+    .btn{ cursor:pointer; transition: transform .06s ease, border-color .2s ease, background .2s ease; }
+    .btn:hover{ border-color: rgba(255,255,255,.18); }
+    .btn:active{ transform: translateY(1px); }
+    .btn.primary{ background: rgba(79,140,255,.16); border-color: rgba(79,140,255,.35); }
+    .btn.ghost{ background: transparent; }
+    .btn.danger{ background: rgba(239,68,68,.10); border-color: rgba(239,68,68,.35); }
+
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px; border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.05);
+      font-size:12px;
+      color: var(--muted);
+    }
+
+    /* Banner */
+    .banner{
+      margin:14px 0 12px;
+      border-radius: var(--r);
+      border:1px solid var(--border);
+      background: rgba(18,26,39,.62);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .bannerInner{
+      height: 210px;
+      background: rgba(255,255,255,.06);
+      position: relative;
+      display:flex; align-items:flex-end;
+    }
+    .bannerInner img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .bannerOverlay{
+      position:absolute; inset:0;
+      background: linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.60));
+    }
+    .bannerText{
+      position:absolute; left:16px; right:16px; bottom:14px;
+      display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap;
+    }
+    .bannerText h2{ margin:0; font-size:22px; letter-spacing:.2px; }
+    .bannerText p{ margin:6px 0 0; color: rgba(231,238,247,.85); max-width: 70ch; }
+
+    /* Layout */
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: var(--gridGap);
+      margin-top: 14px;
+    }
+
+    /* Square product cards */
+    .productCard{
+      grid-column: span 4;
+      border:1px solid var(--border);
+      border-radius: var(--r);
+      background: rgba(18,26,39,.62);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      min-height: 350px;
+    }
+    @media (max-width: 980px){ .productCard{ grid-column: span 6; } }
+    @media (max-width: 640px){ .productCard{ grid-column: span 12; } .input{ min-width: 160px; } }
+
+    .squareMedia{
+      width:100%;
+      aspect-ratio: 1 / 1;   /* <-- khung vuông */
+      background: rgba(255,255,255,.06);
+      position:relative;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .squareMedia img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .tag{
+      position:absolute; top:12px; left:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(0,0,0,.45);
+      border: 1px solid rgba(255,255,255,.14);
+      font-size:12px;
+    }
+    .content{ padding:14px 14px 12px; display:flex; flex-direction:column; gap:10px; flex:1; }
+    .row{ display:flex; gap:10px; flex-wrap:wrap; }
+    .row > *{ flex:1; }
+    .titleRow{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+    .titleRow h3{ margin:0; font-size:16px; }
+    .price{ font-weight:900; }
+    .desc{ margin:0; font-size:13px; color: var(--muted); }
+    .meta{ display:flex; gap:8px; flex-wrap:wrap; margin-top:auto; }
+
+    /* Panels / sections */
+    .section{
+      border:1px solid var(--border);
+      border-radius: var(--r);
+      background: rgba(18,26,39,.62);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .twoCol{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--gridGap);
+    }
+    @media (max-width: 900px){ .twoCol{ grid-template-columns: 1fr; } }
+
+    /* Drawer */
+    .drawer{
+      position:fixed; inset:0; background: rgba(0,0,0,.58);
+      display:none; align-items:flex-end; justify-content:center;
+      padding: 18px;
+      z-index: 100;
+    }
+    .drawer.open{ display:flex; }
+    .panel{
+      width: min(1040px, 100%);
+      max-height: 90vh;
+      overflow:auto;
+      border:1px solid var(--border);
+      border-radius: 22px;
+      background: rgba(10,14,22,.92);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+    .panelHeader{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding: 8px 6px 12px;
+      border-bottom:1px solid var(--border);
+    }
+    .panelHeader h3{ margin:0; font-size:16px; }
+    .panelBody{ padding: 12px 6px; }
+
+    table{ width:100%; border-collapse:collapse; font-size:14px; }
+    th,td{ padding:10px 8px; border-bottom:1px solid var(--border); vertical-align:top; text-align:left; }
+    th{ color:var(--muted); font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:.2px; }
+    .right{ text-align:right; }
+    .muted{ color: var(--muted); }
+    .note{
+      padding: 10px 12px;
+      border: 1px dashed rgba(255,255,255,.18);
+      border-radius: 16px;
+      color: var(--muted);
+      font-size: 13px;
+      background: rgba(255,255,255,.03);
+    }
+    .totalBar{
+      display:flex; justify-content:space-between; align-items:center; gap:12px;
+      padding: 12px 10px;
+      border:1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(255,255,255,.04);
+      margin-top: 12px;
+    }
+
+    /* QR */
+    .qrWrap{
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 18px;
+      background: rgba(0,0,0,.18);
+      padding: 12px;
+      display:flex; align-items:center; justify-content:center;
+      min-height: 280px;
+    }
+    .qrWrap img{ max-width: 100%; border-radius: 12px; display:block; }
+    .badgeOk{
+      display:inline-flex; gap:8px; align-items:center;
+      padding: 8px 10px; border-radius: 999px;
+      border: 1px solid rgba(34,197,94,.35);
+      background: rgba(34,197,94,.10);
+      color: rgba(220,255,235,.95);
+      font-size: 12px;
+    }
+
+    /* Tabs */
+    .tabs{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+    .tab{
+      padding:10px 12px;
+      border-radius: 999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      cursor:pointer;
+      font-size: 13px;
+      color: var(--muted);
+      user-select:none;
+    }
+    .tab.active{
+      color: var(--text);
+      border-color: rgba(79,140,255,.35);
+      background: rgba(79,140,255,.14);
+    }
+
+    .toast{
+      position:fixed; left:50%; bottom:18px; transform: translateX(-50%);
+      display:none;
+      padding:10px 12px;
+      border-radius: 999px;
+      border:1px solid var(--border);
+      background: rgba(18,26,39,.90);
+      box-shadow: var(--shadow);
+      z-index: 999;
+    }
+    .toast.show{ display:block; }
+
+    /* Footer contact */
+    .footer{
+      margin-top: 18px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      padding-top: 14px;
+      display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .links{ display:flex; gap:10px; flex-wrap:wrap; }
+    .linkBtn{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px; border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+    }
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      color: rgba(231,238,247,.9);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="brand">
+        <div class="logoBox" id="logoBox">
+          <div class="logoFallback" id="logoFallback">S</div>
+          <img id="logoImg" alt="Logo" style="display:none" />
+        </div>
+        <div>
+          <h1 id="shopName">Modern Shop</h1>
+          <small id="shopTagline">Thanh toán chuyển khoản • Quét QR</small>
+        </div>
+      </div>
+
+      <div class="actions">
+        <input id="search" class="input" placeholder="Tìm sản phẩm..." />
+        <button class="btn ghost" id="btnAccount">Tài khoản</button>
+        <button class="btn ghost" id="btnSettings">Cài đặt</button>
+        <button class="btn primary" id="btnCart">Giỏ hàng (<span id="cartCount">0</span>)</button>
+      </div>
+    </div>
+
+    <!-- Banner -->
+    <div class="banner">
+      <div class="bannerInner">
+        <div class="bannerOverlay"></div>
+        <img id="bannerImg" alt="Banner" style="display:none" />
+        <div class="bannerText">
+          <div>
+            <h2 id="heroTitle">Website bán hàng hiện đại</h2>
+            <p id="heroDesc">Sản phẩm hiển thị khung vuông. Có QR chuyển khoản. Có trang đăng ký/đăng nhập và khôi phục mật khẩu bằng Gmail (demo bằng mã). Bạn tự chỉnh toàn bộ giao diện trong Cài đặt.</p>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
+            <span class="pill">UI tối giản</span>
+            <span class="pill">QR chuyển khoản</span>
+            <span class="pill">Tài khoản</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main sections -->
+    <div class="grid">
+      <!-- Products -->
+      <div class="section" style="grid-column: span 8;">
+        <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+          <div>
+            <div class="muted" style="font-size:12px; text-transform:uppercase; letter-spacing:.2px;">Sản phẩm</div>
+            <h3 style="margin:6px 0 0;">Danh sách sản phẩm</h3>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn" id="btnHot">Nổi bật</button>
+            <button class="btn" id="btnReset">Reset demo</button>
+          </div>
+        </div>
+        <div class="grid" id="productGrid" style="margin-top: 12px;"></div>
+      </div>
+
+      <!-- Contact / socials -->
+      <div class="section" style="grid-column: span 4;">
+        <div class="muted" style="font-size:12px; text-transform:uppercase; letter-spacing:.2px;">Liên hệ</div>
+        <h3 style="margin:6px 0 10px;">Thông tin cá nhân</h3>
+
+        <div class="note">
+          Bạn có thể chỉnh link Zalo/Telegram/Facebook trong <b>Cài đặt</b>.
+        </div>
+
+        <div style="margin-top:12px; display:grid; gap:10px;">
+          <a class="linkBtn" id="zaloLink" href="#" target="_blank" rel="noopener">
+            Zalo <span class="muted" id="zaloText">—</span>
+          </a>
+          <a class="linkBtn" id="teleLink" href="#" target="_blank" rel="noopener">
+            Telegram <span class="muted" id="teleText">—</span>
+          </a>
+          <a class="linkBtn" id="fbLink" href="#" target="_blank" rel="noopener">
+            Facebook <span class="muted" id="fbText">—</span>
+          </a>
+          <a class="linkBtn" id="webLink" href="#" target="_blank" rel="noopener">
+            Link khác <span class="muted" id="webText">—</span>
+          </a>
+        </div>
+
+        <div class="note" style="margin-top:12px;">
+          Tip: Bạn có thể đặt link dạng:
+          <div style="margin-top:6px;">
+            <div><span class="kbd">https://zalo.me/</span> hoặc <span class="kbd">https://t.me/</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div>© <span id="footShop">Modern Shop</span> • Demo HTML (localStorage)</div>
+      <div class="links">
+        <span class="muted">Đăng nhập để lưu đơn:</span>
+        <span class="kbd" id="userStatus">Chưa đăng nhập</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CART / CHECKOUT -->
+  <div class="drawer" id="cartDrawer">
+    <div class="panel">
+      <div class="panelHeader">
+        <h3>Giỏ hàng & Thanh toán QR</h3>
+        <div class="row" style="flex:0">
+          <button class="btn ghost" id="btnCloseCart">Đóng</button>
+        </div>
+      </div>
+
+      <div class="panelBody twoCol">
+        <div>
+          <table>
+            <thead>
+              <tr>
+                <th>Sản phẩm</th>
+                <th class="right">Giá</th>
+                <th class="right">SL</th>
+                <th class="right">Tạm tính</th>
+                <th class="right"></th>
+              </tr>
+            </thead>
+            <tbody id="cartTable"></tbody>
+          </table>
+
+          <div class="totalBar">
+            <div>
+              <div class="muted" style="font-size:12px; text-transform:uppercase; letter-spacing:.2px;">Tổng cộng</div>
+              <div style="font-size:18px; font-weight:900" id="cartTotal">0</div>
+            </div>
+            <button class="btn primary" id="btnGenQR">Tạo QR thanh toán</button>
+          </div>
+
+          <div class="note" style="margin-top:12px">
+            <b>Lưu ý:</b> QR hiển thị bằng ảnh từ <b>VietQR</b> (cần Internet).
+            “Khôi phục mật khẩu Gmail” trong bản HTML này là <b>demo</b> (tạo mã ngay trên web).
+            Nếu bạn muốn gửi email thật → cần backend (Next.js/Supabase).
+          </div>
+        </div>
+
+        <div class="section" style="padding:12px;">
+          <h3 style="margin:0 0 10px">Thông tin thanh toán</h3>
+
+          <div class="row">
+            <input class="input" id="ckName" placeholder="Họ và tên" />
+            <input class="input" id="ckPhone" placeholder="Số điện thoại" />
+          </div>
+          <div class="row">
+            <input class="input" id="ckEmail" placeholder="Gmail (để khôi phục)" />
+          </div>
+          <div class="row">
+            <input class="input" id="ckAddress" placeholder="Địa chỉ (tuỳ chọn)" />
+          </div>
+          <div class="row">
+            <textarea class="input" id="ckNote" placeholder="Ghi chú (tuỳ chọn)"></textarea>
+          </div>
+
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-top:10px;">
+            <div class="muted" style="font-size:13px;">
+              Nội dung CK: <b id="transferContent">—</b>
+            </div>
+            <span class="badgeOk" id="qrStatus" style="display:none;">QR sẵn sàng</span>
+          </div>
+
+          <div class="qrWrap" style="margin-top:12px;">
+            <div class="muted" id="qrPlaceholder" style="text-align:center;">
+              Nhấn <b>Tạo QR thanh toán</b> để hiển thị mã QR chuyển khoản.
+            </div>
+            <img id="qrImg" alt="QR chuyển khoản" style="display:none;" />
+          </div>
+
+          <div class="row" style="margin-top:12px;">
+            <button class="btn" id="btnCopyContent">Copy nội dung CK</button>
+            <button class="btn primary" id="btnPlaceOrder">Tôi đã chuyển khoản</button>
+          </div>
+
+          <div class="note" style="margin-top:12px">
+            Đơn hàng sẽ chỉ được lưu nếu bạn <b>đăng nhập</b> (demo). Admin có thể xem trong Cài đặt.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACCOUNT (register/login/forgot) -->
+  <div class="drawer" id="accountDrawer">
+    <div class="panel">
+      <div class="panelHeader">
+        <h3>Tài khoản</h3>
+        <div class="row" style="flex:0">
+          <button class="btn ghost" id="btnCloseAccount">Đóng</button>
+        </div>
+      </div>
+
+      <div class="panelBody">
+        <div class="tabs">
+          <div class="tab active" data-tab="login">Đăng nhập</div>
+          <div class="tab" data-tab="register">Đăng ký</div>
+          <div class="tab" data-tab="forgot">Quên mật khẩu</div>
+        </div>
+
+        <div id="tab_login">
+          <div class="twoCol">
+            <div class="section">
+              <h3 style="margin:0 0 10px">Đăng nhập</h3>
+              <div class="row">
+                <input class="input" id="lgUser" placeholder="Tài khoản" />
+                <input class="input" id="lgPass" placeholder="Mật khẩu" type="password" />
+              </div>
+              <button class="btn primary" id="btnLogin" style="width:100%; margin-top:10px">Đăng nhập</button>
+              <div class="note" style="margin-top:12px">
+                Đây là bản HTML demo: dữ liệu lưu localStorage. Muốn bảo mật thật + email reset Gmail thật → cần backend.
+              </div>
+            </div>
+
+            <div class="section">
+              <h3 style="margin:0 0 10px">Trạng thái</h3>
+              <div class="note">
+                User hiện tại: <b id="currentUserText">Chưa đăng nhập</b>
+              </div>
+              <div class="row" style="margin-top:12px;">
+                <button class="btn" id="btnLogout">Đăng xuất</button>
+                <button class="btn danger" id="btnWipeMe">Xoá tài khoản (demo)</button>
+              </div>
+              <div class="note" style="margin-top:12px">
+                Email khôi phục (Gmail): <b id="currentEmailText">—</b>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab_register" style="display:none">
+          <div class="twoCol">
+            <div class="section">
+              <h3 style="margin:0 0 10px">Đăng ký</h3>
+              <div class="row">
+                <input class="input" id="rgUser" placeholder="Tài khoản" />
+                <input class="input" id="rgPass" placeholder="Mật khẩu" type="password" />
+              </div>
+              <div class="row">
+                <input class="input" id="rgGmail" placeholder="Gmail khôi phục (vd: abc@gmail.com)" />
+              </div>
+              <button class="btn primary" id="btnRegister" style="width:100%; margin-top:10px">Tạo tài khoản</button>
+              <div class="note" style="margin-top:12px">
+                Khuyến nghị mật khẩu mạnh. Bản demo này <b>không gửi email</b>, chỉ tạo mã reset ngay trên web.
+              </div>
+            </div>
+
+            <div class="section">
+              <h3 style="margin:0 0 10px">Gợi ý</h3>
+              <div class="note">
+                Bạn có thể bật “bắt buộc Gmail” để khôi phục mật khẩu trong Cài đặt.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab_forgot" style="display:none">
+          <div class="twoCol">
+            <div class="section">
+              <h3 style="margin:0 0 10px">Quên mật khẩu (demo)</h3>
+              <div class="row">
+                <input class="input" id="fpUser" placeholder="Tài khoản" />
+                <input class="input" id="fpGmail" placeholder="Gmail đã đăng ký" />
+              </div>
+              <button class="btn primary" id="btnCreateReset" style="width:100%; margin-top:10px">Tạo mã khôi phục</button>
+
+              <div class="note" style="margin-top:12px">
+                Mã khôi phục demo: <b id="resetCode">—</b><br/>
+                Nhập mã này để đặt lại mật khẩu:
+              </div>
+
+              <div class="row" style="margin-top:10px;">
+                <input class="input" id="fpCode" placeholder="Nhập mã khôi phục" />
+                <input class="input" id="fpNewPass" placeholder="Mật khẩu mới" type="password" />
+              </div>
+              <button class="btn" id="btnResetPass" style="width:100%; margin-top:10px">Đặt lại mật khẩu</button>
+            </div>
+
+            <div class="section">
+              <h3 style="margin:0 0 10px">Lưu ý quan trọng</h3>
+              <div class="note">
+                <b>Reset Gmail thật</b> cần backend (Next.js/Supabase) để gửi email xác nhận.
+                HTML thuần không thể gửi email an toàn.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS / FULL CUSTOMIZATION -->
+  <div class="drawer" id="settingsDrawer">
+    <div class="panel">
+      <div class="panelHeader">
+        <h3>Cài đặt (Toàn quyền tuỳ chỉnh)</h3>
+        <div class="row" style="flex:0">
+          <button class="btn ghost" id="btnCloseSettings">Đóng</button>
+        </div>
+      </div>
+
+      <div class="panelBody twoCol">
+        <!-- Left: Shop settings + payment + socials + branding -->
+        <div>
+          <div class="section">
+            <h3 style="margin:0 0 10px">Giao diện shop</h3>
+            <div class="row">
+              <input class="input" id="setShopName" placeholder="Tên shop" />
+              <input class="input" id="setTagline" placeholder="Tagline" />
+            </div>
+            <div class="row">
+              <input class="input" id="setHeroTitle" placeholder="Tiêu đề banner" />
+            </div>
+            <div class="row">
+              <input class="input" id="setHeroDesc" placeholder="Mô tả banner" />
+            </div>
+            <div class="row">
+              <input class="input" id="setBrand" placeholder="Màu chủ đạo (vd: #4f8cff)" />
+              <input class="input" id="setCurrency" placeholder="Đơn vị tiền (vd: ₫, VND)" />
+            </div>
+            <div class="row">
+              <input class="input" id="setGridGap" placeholder="Khoảng cách grid (vd: 14)" inputmode="numeric" />
+              <input class="input" id="setLogoText" placeholder="Chữ logo fallback (vd: S)" />
+            </div>
+          </div>
+
+          <div class="section" style="margin-top:14px;">
+            <h3 style="margin:0 0 10px">Logo & Banner</h3>
+            <div class="row">
+              <input class="input" id="setLogoUrl" placeholder="Link ảnh logo (https://...)" />
+            </div>
+            <div class="row">
+              <input class="input" id="setBannerUrl" placeholder="Link ảnh banner (https://...)" />
+            </div>
+            <div class="note" style="margin-top:10px">
+              Tip: Logo vuông PNG/JPG. Banner nên tỉ lệ ngang (ví dụ 1600×600).
+            </div>
+          </div>
+
+          <div class="section" style="margin-top:14px;">
+            <h3 style="margin:0 0 10px">Thanh toán QR chuyển khoản</h3>
+            <div class="row">
+              <input class="input" id="setBankId" placeholder="Bank ID (vd: VCB, ACB, TCB...)" />
+              <input class="input" id="setAccNo" placeholder="Số tài khoản" />
+            </div>
+            <div class="row">
+              <input class="input" id="setAccName" placeholder="Tên chủ tài khoản (không dấu càng tốt)" />
+            </div>
+            <div class="row">
+              <input class="input" id="setOrderPrefix" placeholder="Prefix mã đơn (vd: ORD)" />
+              <input class="input" id="setQrTemplate" placeholder="QR template (vd: compact2)" />
+            </div>
+            <div class="note" style="margin-top:10px">
+              QR dùng VietQR image API. Nếu QR không hiển thị → kiểm tra Bank ID / số tài khoản.
+            </div>
+          </div>
+
+          <div class="section" style="margin-top:14px;">
+            <h3 style="margin:0 0 10px">Thông tin cá nhân (Socials)</h3>
+            <div class="row">
+              <input class="input" id="setZalo" placeholder="Link Zalo (https://zalo.me/...)" />
+            </div>
+            <div class="row">
+              <input class="input" id="setTele" placeholder="Link Telegram (https://t.me/...)" />
+            </div>
+            <div class="row">
+              <input class="input" id="setFacebook" placeholder="Link Facebook (https://facebook.com/...)" />
+            </div>
+            <div class="row">
+              <input class="input" id="setWebsite" placeholder="Link khác (website/landing...)" />
+            </div>
+          </div>
+
+          <div class="section" style="margin-top:14px;">
+            <h3 style="margin:0 0 10px">Tài khoản</h3>
+            <div class="row">
+              <select class="input" id="setRequireGmail">
+                <option value="yes">Bắt buộc Gmail khi đăng ký</option>
+                <option value="no">Không bắt buộc Gmail</option>
+              </select>
+            </div>
+            <div class="note" style="margin-top:10px">
+              Bản HTML này chỉ demo reset bằng mã. Email Gmail thật cần backend.
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:14px;">
+            <button class="btn primary" id="btnSaveSettings">Lưu cài đặt</button>
+            <button class="btn" id="btnSeed">Nạp demo</button>
+            <button class="btn danger" id="btnWipeAll">Xoá dữ liệu (demo)</button>
+          </div>
+        </div>
+
+        <!-- Right: Product manager + Orders -->
+        <div>
+          <div class="section">
+            <h3 style="margin:0 0 10px">Thêm / Sửa sản phẩm</h3>
+            <div class="row">
+              <input class="input" id="pTitle" placeholder="Tên sản phẩm" />
+              <input class="input" id="pPrice" placeholder="Giá (số)" inputmode="numeric" />
+            </div>
+            <div class="row">
+              <input class="input" id="pTag" placeholder="Tag (vd: Hot / New)" />
+              <input class="input" id="pImage" placeholder="Link ảnh sản phẩm (https://...)" />
+            </div>
+            <div class="row">
+              <textarea class="input" id="pDesc" placeholder="Mô tả ngắn"></textarea>
+            </div>
+            <div class="row">
+              <button class="btn primary" id="btnSaveProduct">Lưu sản phẩm</button>
+              <button class="btn" id="btnClearProduct">Xoá form</button>
+            </div>
+          </div>
+
+          <div class="section" style="margin-top:14px;">
+            <h3 style="margin:0 0 10px">Danh sách sản phẩm</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Tên</th>
+                  <th class="right">Giá</th>
+                  <th class="right">Hành động</th>
+                </tr>
+              </thead>
+              <tbody id="adminProducts"></tbody>
+            </table>
+          </div>
+
+          <div class="section" style="margin-top:14px;">
+            <h3 style="margin:0 0 10px">Đơn hàng (demo)</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Mã</th>
+                  <th>Khách</th>
+                  <th class="right">Tổng</th>
+                </tr>
+              </thead>
+              <tbody id="adminOrders"></tbody>
+            </table>
+            <div class="note" style="margin-top:10px">
+              Demo: đơn lưu localStorage. Làm thật (database, đăng nhập an toàn, email reset Gmail thật) → Next.js/Supabase.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // =========================================================
+    // IMPORTANT NOTE (SECURITY)
+    // =========================================================
+    // Đây là bản HTML demo chạy tại máy/trình duyệt:
+    // - Tài khoản + mật khẩu lưu localStorage (không an toàn cho production).
+    // - Khôi phục "Gmail" chỉ demo bằng mã hiển thị, KHÔNG gửi email thật.
+    // Muốn chạy thật: dùng Next.js + Supabase Auth + DB + Email reset.
+
+    // =========================
+    // STORAGE KEYS
+    // =========================
+    const KEY = {
+      SETTINGS: "shop_settings_v2",
+      PRODUCTS: "shop_products_v2",
+      CART: "shop_cart_v2",
+      ORDERS: "shop_orders_v2",
+      USERS: "shop_users_v2",
+      SESSION: "shop_session_v2",
+      RESET: "shop_reset_v2"
+    };
+
+    // =========================
+    // DEFAULTS
+    // =========================
+    const defaults = {
+      settings: {
+        shopName: "Modern Shop",
+        tagline: "Thanh toán chuyển khoản • Quét QR",
+        heroTitle: "Website bán hàng hiện đại",
+        heroDesc: "Sản phẩm hiển thị khung vuông. Có QR chuyển khoản. Có trang đăng ký/đăng nhập và khôi phục mật khẩu bằng Gmail (demo bằng mã). Bạn tự chỉnh toàn bộ giao diện trong Cài đặt.",
+        currency: "₫",
+        brand: "#4f8cff",
+        gridGap: 14,
+
+        // Branding images
+        logoUrl: "",
+        logoText: "S",
+        bannerUrl: "",
+
+        // Payment (VietQR image)
+        bankId: "VCB",
+        accNo: "0123456789",
+        accName: "NGUYEN VAN A",
+        orderPrefix: "ORD",
+        qrTemplate: "compact2",
+
+        // Socials
+        zalo: "https://zalo.me/",
+        telegram: "https://t.me/",
+        facebook: "https://facebook.com/",
+        website: "https://",
+
+        // Accounts
+        requireGmail: "yes"
+      },
+      products: [
+        { id: crypto.randomUUID(), title:"Gói 1 tháng", price: 99000, tag:"Hot", image:"", desc:"Dùng thử nhẹ nhàng, hỗ trợ nhanh." },
+        { id: crypto.randomUUID(), title:"Gói 3 tháng", price: 249000, tag:"Best", image:"", desc:"Tiết kiệm hơn, phù hợp dùng dài." },
+        { id: crypto.randomUUID(), title:"Gói 12 tháng", price: 799000, tag:"Save", image:"", desc:"Giá tốt nhất cho khách thân thiết." },
+      ]
+    };
+
+    function loadJSON(k, fallback){
+      try{
+        const raw = localStorage.getItem(k);
+        return raw ? JSON.parse(raw) : fallback;
+      }catch{ return fallback; }
+    }
+    function saveJSON(k, v){ localStorage.setItem(k, JSON.stringify(v)); }
+
+    let settings = loadJSON(KEY.SETTINGS, defaults.settings);
+    let products = loadJSON(KEY.PRODUCTS, defaults.products);
+    let cart = loadJSON(KEY.CART, {});
+    let orders = loadJSON(KEY.ORDERS, []);
+    let users = loadJSON(KEY.USERS, {}); // {username: {passHash, gmail}}
+    let session = loadJSON(KEY.SESSION, { user: null }); // {user: username|null}
+    let resetStore = loadJSON(KEY.RESET, {}); // {username: {code, createdAt}}
+
+    // =========================
+    // DOM
+    // =========================
+    const $ = (s)=>document.querySelector(s);
+
+    const shopNameEl = $("#shopName");
+    const shopTaglineEl = $("#shopTagline");
+    const heroTitleEl = $("#heroTitle");
+    const heroDescEl = $("#heroDesc");
+    const footShopEl = $("#footShop");
+    const userStatusEl = $("#userStatus");
+
+    const logoImg = $("#logoImg");
+    const logoFallback = $("#logoFallback");
+    const bannerImg = $("#bannerImg");
+
+    const searchEl = $("#search");
+    const productGridEl = $("#productGrid");
+
+    const cartDrawer = $("#cartDrawer");
+    const settingsDrawer = $("#settingsDrawer");
+    const accountDrawer = $("#accountDrawer");
+
+    const cartCountEl = $("#cartCount");
+    const cartTableEl = $("#cartTable");
+    const cartTotalEl = $("#cartTotal");
+
+    const ckName = $("#ckName");
+    const ckPhone = $("#ckPhone");
+    const ckEmail = $("#ckEmail");
+    const ckAddress = $("#ckAddress");
+    const ckNote = $("#ckNote");
+
+    const transferContentEl = $("#transferContent");
+    const qrImg = $("#qrImg");
+    const qrPlaceholder = $("#qrPlaceholder");
+    const qrStatus = $("#qrStatus");
+
+    const toastEl = $("#toast");
+
+    // Social links display
+    const zaloLink = $("#zaloLink"), teleLink=$("#teleLink"), fbLink=$("#fbLink"), webLink=$("#webLink");
+    const zaloText = $("#zaloText"), teleText=$("#teleText"), fbText=$("#fbText"), webText=$("#webText");
+
+    // Settings fields
+    const setShopName = $("#setShopName");
+    const setTagline = $("#setTagline");
+    const setHeroTitle = $("#setHeroTitle");
+    const setHeroDesc = $("#setHeroDesc");
+    const setBrand = $("#setBrand");
+    const setCurrency = $("#setCurrency");
+    const setGridGap = $("#setGridGap");
+    const setLogoText = $("#setLogoText");
+
+    const setLogoUrl = $("#setLogoUrl");
+    const setBannerUrl = $("#setBannerUrl");
+
+    const setBankId = $("#setBankId");
+    const setAccNo = $("#setAccNo");
+    const setAccName = $("#setAccName");
+    const setOrderPrefix = $("#setOrderPrefix");
+    const setQrTemplate = $("#setQrTemplate");
+
+    const setZalo = $("#setZalo");
+    const setTele = $("#setTele");
+    const setFacebook = $("#setFacebook");
+    const setWebsite = $("#setWebsite");
+
+    const setRequireGmail = $("#setRequireGmail");
+
+    // Product form
+    const pTitle = $("#pTitle");
+    const pPrice = $("#pPrice");
+    const pTag = $("#pTag");
+    const pImage = $("#pImage");
+    const pDesc = $("#pDesc");
+    const adminProductsEl = $("#adminProducts");
+    const adminOrdersEl = $("#adminOrders");
+    let editingProductId = null;
+
+    // Account refs
+    const currentUserText = $("#currentUserText");
+    const currentEmailText = $("#currentEmailText");
+
+    const lgUser = $("#lgUser"), lgPass = $("#lgPass");
+    const rgUser = $("#rgUser"), rgPass = $("#rgPass"), rgGmail = $("#rgGmail");
+    const fpUser = $("#fpUser"), fpGmail = $("#fpGmail"), fpCode = $("#fpCode"), fpNewPass = $("#fpNewPass");
+    const resetCodeEl = $("#resetCode");
+
+    // =========================
+    // UTIL
+    // =========================
+    function toast(msg){
+      toastEl.textContent = msg;
+      toastEl.classList.add("show");
+      setTimeout(()=>toastEl.classList.remove("show"), 1600);
+    }
+
+    function escapeHtml(str){
+      return String(str ?? "").replace(/[&<>"']/g, s => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+      }[s]));
+    }
+    function escapeAttr(str){ return escapeHtml(str).replace(/"/g, "&quot;"); }
+
+    function fmtMoney(n){
+      const c = settings.currency || "₫";
+      const v = Number(n||0);
+      return `${v.toLocaleString("vi-VN")} ${c}`.trim();
+    }
+
+    // Simple hash for demo (NOT for production)
+    async function sha256(text){
+      const enc = new TextEncoder().encode(text);
+      const buf = await crypto.subtle.digest("SHA-256", enc);
+      return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
+    }
+
+    function applySettings(){
+      document.documentElement.style.setProperty("--brand", settings.brand || defaults.settings.brand);
+      document.documentElement.style.setProperty("--gridGap", (Number(settings.gridGap)||14) + "px");
+
+      shopNameEl.textContent = settings.shopName || defaults.settings.shopName;
+      shopTaglineEl.textContent = settings.tagline || defaults.settings.tagline;
+      heroTitleEl.textContent = settings.heroTitle || defaults.settings.heroTitle;
+      heroDescEl.textContent = settings.heroDesc || defaults.settings.heroDesc;
+      footShopEl.textContent = settings.shopName || defaults.settings.shopName;
+
+      // Logo
+      const letter = (settings.logoText || "S").trim().slice(0,1).toUpperCase();
+      logoFallback.textContent = letter || "S";
+
+      if(settings.logoUrl && settings.logoUrl.trim().startsWith("http")){
+        logoImg.src = settings.logoUrl.trim();
+        logoImg.style.display = "block";
+        logoFallback.style.display = "none";
+      }else{
+        logoImg.style.display = "none";
+        logoFallback.style.display = "flex";
+      }
+
+      // Banner
+      if(settings.bannerUrl && settings.bannerUrl.trim().startsWith("http")){
+        bannerImg.src = settings.bannerUrl.trim();
+        bannerImg.style.display = "block";
+      }else{
+        bannerImg.style.display = "none";
+      }
+
+      // Social links
+      setSocialLink(zaloLink, zaloText, settings.zalo, "Zalo");
+      setSocialLink(teleLink, teleText, settings.telegram, "Telegram");
+      setSocialLink(fbLink, fbText, settings.facebook, "Facebook");
+      setSocialLink(webLink, webText, settings.website, "Link");
+    }
+
+    function setSocialLink(aEl, textEl, url, label){
+      const u = (url || "").trim();
+      if(u && (u.startsWith("http://") || u.startsWith("https://"))){
+        aEl.href = u;
+        textEl.textContent = shortUrl(u);
+        aEl.style.opacity = "1";
+        aEl.style.pointerEvents = "auto";
+      }else{
+        aEl.href = "#";
+        textEl.textContent = "Chưa đặt link";
+        aEl.style.opacity = ".65";
+        aEl.style.pointerEvents = "none";
+      }
+    }
+    function shortUrl(u){
+      try{
+        const x = new URL(u);
+        return x.host + (x.pathname.length>1 ? x.pathname : "");
+      }catch{
+        return u.slice(0, 32) + (u.length>32 ? "…" : "");
+      }
+    }
+
+    // =========================
+    // CART
+    // =========================
+    function cartCount(){
+      return Object.values(cart).reduce((a,b)=>a+b, 0);
+    }
+    function cartTotal(){
+      let t = 0;
+      for(const [pid, qty] of Object.entries(cart)){
+        const p = products.find(x=>x.id===pid);
+        if(p) t += (Number(p.price)||0) * qty;
+      }
+      return t;
+    }
+    function renderCartBadge(){
+      cartCountEl.textContent = String(cartCount());
+    }
+    function addToCart(pid){
+      cart[pid] = (cart[pid]||0) + 1;
+      saveJSON(KEY.CART, cart);
+      renderCartBadge();
+      toast("Đã thêm vào giỏ");
+    }
+    function setCartQty(pid, qty){
+      const q = Math.max(0, Math.min(999, Number(qty||0)));
+      if(q<=0) delete cart[pid]; else cart[pid] = q;
+      saveJSON(KEY.CART, cart);
+      renderCart();
+      renderCartBadge();
+    }
+    function clearCart(){
+      cart = {};
+      saveJSON(KEY.CART, cart);
+      renderCart();
+      renderCartBadge();
+    }
+
+    function renderCart(){
+      const rows = [];
+      for(const [pid, qty] of Object.entries(cart)){
+        const p = products.find(x=>x.id===pid);
+        if(!p) continue;
+        const sub = (Number(p.price)||0) * qty;
+        rows.push(`
+          <tr>
+            <td>
+              <div style="font-weight:900">${escapeHtml(p.title)}</div>
+              <div class="muted" style="font-size:12px">${escapeHtml(p.tag||"—")}</div>
+            </td>
+            <td class="right">${fmtMoney(p.price)}</td>
+            <td class="right"><input class="input" style="width:72px;text-align:right" value="${qty}" inputmode="numeric" data-qty="${pid}" /></td>
+            <td class="right">${fmtMoney(sub)}</td>
+            <td class="right"><button class="btn ghost" data-del="${pid}">Xoá</button></td>
+          </tr>
+        `);
+      }
+      cartTableEl.innerHTML = rows.join("") || `<tr><td colspan="5" class="muted">Giỏ hàng trống.</td></tr>`;
+      cartTotalEl.textContent = fmtMoney(cartTotal());
+
+      cartTableEl.querySelectorAll("[data-del]").forEach(btn=>{
+        btn.addEventListener("click", ()=> setCartQty(btn.getAttribute("data-del"), 0));
+      });
+      cartTableEl.querySelectorAll("[data-qty]").forEach(inp=>{
+        inp.addEventListener("change", ()=> setCartQty(inp.getAttribute("data-qty"), inp.value));
+      });
+    }
+
+    // =========================
+    // PRODUCTS (Square cards)
+    // =========================
+    function productCard(p){
+      const hasImg = p.image && p.image.trim().startsWith("http");
+      const img = hasImg
+        ? `<img alt="${escapeHtml(p.title)}" src="${escapeAttr(p.image)}">`
+        : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.55);font-weight:900;font-size:24px">
+             ${escapeHtml(p.title).slice(0,1).toUpperCase()}
+           </div>`;
+      return `
+        <div class="productCard">
+          <div class="squareMedia">
+            ${img}
+            ${p.tag ? `<div class="tag">${escapeHtml(p.tag)}</div>` : ""}
+          </div>
+          <div class="content">
+            <div class="titleRow">
+              <h3>${escapeHtml(p.title)}</h3>
+              <div class="price">${fmtMoney(p.price)}</div>
+            </div>
+            <p class="desc">${escapeHtml(p.desc||"")}</p>
+            <div class="meta">
+              <span class="pill">Hỗ trợ</span>
+              <span class="pill">Giao nhanh</span>
+              <span class="pill"><b style="color:var(--text)">${fmtMoney(p.price)}</b></span>
+            </div>
+            <div class="row">
+              <button class="btn primary" data-add="${p.id}">Thêm vào giỏ</button>
+              <button class="btn" data-buy="${p.id}">Mua ngay</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderProducts(){
+      const q = (searchEl.value || "").trim().toLowerCase();
+      const list = products
+        .filter(p => !q || (p.title||"").toLowerCase().includes(q) || (p.desc||"").toLowerCase().includes(q))
+        .slice()
+        .sort((a,b)=> (Number(a.price)||0) - (Number(b.price)||0));
+
+      productGridEl.innerHTML = list.map(productCard).join("") || `
+        <div class="note" style="grid-column: span 12">Không có sản phẩm phù hợp.</div>
+      `;
+
+      productGridEl.querySelectorAll("[data-add]").forEach(btn=>{
+        btn.addEventListener("click", ()=> addToCart(btn.getAttribute("data-add")));
+      });
+      productGridEl.querySelectorAll("[data-buy]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          addToCart(btn.getAttribute("data-buy"));
+          openCart();
+        });
+      });
+    }
+
+    // =========================
+    // QR PAYMENT (VietQR image)
+    // =========================
+    function makeOrderCode(){
+      const prefix = (settings.orderPrefix || "ORD").replace(/\s+/g,"").toUpperCase();
+      const rnd = Math.floor(Math.random()*900000)+100000;
+      return `${prefix}${rnd}`;
+    }
+
+    function buildVietQrImageUrl({ bankId, accNo, template, amount, addInfo, accountName }){
+      const safeBank = encodeURIComponent((bankId||"").trim());
+      const safeAcc = encodeURIComponent((accNo||"").trim());
+      const safeTpl = encodeURIComponent((template||"compact2").trim());
+
+      const params = new URLSearchParams();
+      if(Number(amount) > 0) params.set("amount", String(Math.floor(Number(amount))));
+      if(addInfo) params.set("addInfo", addInfo);
+      if(accountName) params.set("accountName", accountName);
+
+      return `https://api.vietqr.io/image/${safeBank}-${safeAcc}-${safeTpl}.png?${params.toString()}`;
+    }
+
+    let lastOrderDraft = null;
+
+    function validateCheckout(){
+      if(cartCount() === 0) { toast("Giỏ hàng trống"); return false; }
+
+      const name = ckName.value.trim();
+      const phone = ckPhone.value.trim();
+      const gmail = ckEmail.value.trim();
+
+      if(!name || !phone || !gmail){
+        toast("Nhập Tên / SĐT / Gmail");
+        return false;
+      }
+      if(!gmail.toLowerCase().endsWith("@gmail.com")){
+        toast("Vui lòng nhập Gmail để khôi phục");
+        return false;
+      }
+      if(!(settings.bankId && settings.accNo)){
+        toast("Chưa cấu hình ngân hàng / số tài khoản");
+        return false;
+      }
+      if(!session.user){
+        toast("Vui lòng đăng nhập để đặt hàng");
+        return false;
+      }
+      return true;
+    }
+
+    function genQR(){
+      if(!validateCheckout()) return;
+
+      const orderCode = makeOrderCode();
+      const total = cartTotal();
+
+      transferContentEl.textContent = orderCode;
+
+      const url = buildVietQrImageUrl({
+        bankId: settings.bankId,
+        accNo: settings.accNo,
+        template: settings.qrTemplate || "compact2",
+        amount: total,
+        addInfo: orderCode,
+        accountName: (settings.accName||"").trim()
+      });
+
+      qrImg.style.display = "block";
+      qrPlaceholder.style.display = "none";
+      qrImg.src = url;
+
+      qrStatus.style.display = "inline-flex";
+
+      lastOrderDraft = {
+        code: orderCode,
+        createdAt: new Date().toLocaleString("vi-VN"),
+        total,
+        status: "customer_marked_paid",
+        customer: {
+          username: session.user,
+          name: ckName.value.trim(),
+          phone: ckPhone.value.trim(),
+          gmail: ckEmail.value.trim(),
+          address: ckAddress.value.trim(),
+          note: ckNote.value.trim()
+        },
+        payment: {
+          bankId: settings.bankId,
+          accNo: settings.accNo,
+          accName: settings.accName || "",
+          qrTemplate: settings.qrTemplate || "compact2"
+        },
+        items: Object.entries(cart).map(([pid, qty])=>{
+          const p = products.find(x=>x.id===pid);
+          return { productId: pid, title: p?.title || "Unknown", price: p?.price || 0, qty: Number(qty) };
+        })
+      };
+
+      toast("Đã tạo QR");
+    }
+
+    function placeOrderDemo(){
+      if(!lastOrderDraft){
+        toast("Hãy tạo QR trước");
+        return;
+      }
+      orders.push(lastOrderDraft);
+      saveJSON(KEY.ORDERS, orders);
+
+      clearCart();
+      lastOrderDraft = null;
+
+      qrImg.style.display = "none";
+      qrPlaceholder.style.display = "block";
+      qrStatus.style.display = "none";
+      transferContentEl.textContent = "—";
+
+      toast("Đã lưu đơn (demo)");
+      renderAdminOrders();
+      closeCart();
+      alert("Đơn đã lưu (demo). Bạn có thể xem trong Cài đặt > Đơn hàng.");
+    }
+
+    // =========================
+    // ACCOUNTS (Demo localStorage)
+    // =========================
+    function setSession(user){
+      session.user = user;
+      saveJSON(KEY.SESSION, session);
+      updateUserUI();
+    }
+
+    function updateUserUI(){
+      const u = session.user;
+      userStatusEl.textContent = u ? `Đã đăng nhập: ${u}` : "Chưa đăng nhập";
+      currentUserText.textContent = u || "Chưa đăng nhập";
+
+      if(u && users[u]){
+        currentEmailText.textContent = users[u].gmail || "—";
+      }else{
+        currentEmailText.textContent = "—";
+      }
+    }
+
+    function validUsername(u){
+      // simple: 3-24 chars, letters/numbers/._-
+      return /^[a-zA-Z0-9._-]{3,24}$/.test(u);
+    }
+
+    async function register(){
+      const u = rgUser.value.trim();
+      const p = rgPass.value;
+      const g = rgGmail.value.trim();
+
+      if(!validUsername(u)){ toast("Tài khoản 3-24 ký tự (a-z 0-9 . _ -)"); return; }
+      if((p||"").length < 6){ toast("Mật khẩu tối thiểu 6 ký tự"); return; }
+
+      if(settings.requireGmail !== "no"){
+        if(!g || !g.toLowerCase().endsWith("@gmail.com")){ toast("Vui lòng nhập Gmail hợp lệ"); return; }
+      }
+
+      if(users[u]){ toast("Tài khoản đã tồn tại"); return; }
+
+      const passHash = await sha256(p);
+      users[u] = { passHash, gmail: g || "" };
+      saveJSON(KEY.USERS, users);
+
+      toast("Đăng ký thành công");
+      rgUser.value = ""; rgPass.value = ""; rgGmail.value = "";
+    }
+
+    async function login(){
+      const u = lgUser.value.trim();
+      const p = lgPass.value;
+
+      if(!users[u]){ toast("Sai tài khoản hoặc mật khẩu"); return; }
+      const passHash = await sha256(p);
+      if(passHash !== users[u].passHash){ toast("Sai tài khoản hoặc mật khẩu"); return; }
+
+      setSession(u);
+      toast("Đăng nhập thành công");
+      lgPass.value = "";
+      updateUserUI();
+    }
+
+    function logout(){
+      setSession(null);
+      toast("Đã đăng xuất");
+    }
+
+    function wipeMe(){
+      const u = session.user;
+      if(!u){ toast("Chưa đăng nhập"); return; }
+      if(confirm("Xoá tài khoản demo này?")){
+        delete users[u];
+        saveJSON(KEY.USERS, users);
+        setSession(null);
+        toast("Đã xoá tài khoản");
+      }
+    }
+
+    function makeResetCode(){
+      return String(Math.floor(Math.random()*900000)+100000);
+    }
+
+    function createReset(){
+      const u = fpUser.value.trim();
+      const g = fpGmail.value.trim();
+
+      if(!users[u]){ toast("Không tìm thấy tài khoản"); return; }
+      if(!g || users[u].gmail.toLowerCase() !== g.toLowerCase()){
+        toast("Gmail không khớp");
+        return;
+      }
+
+      const code = makeResetCode();
+      resetStore[u] = { code, createdAt: Date.now() };
+      saveJSON(KEY.RESET, resetStore);
+
+      resetCodeEl.textContent = code;
+      toast("Đã tạo mã khôi phục (demo)");
+    }
+
+    async function resetPass(){
+      const u = fpUser.value.trim();
+      const code = fpCode.value.trim();
+      const newPass = fpNewPass.value;
+
+      if(!resetStore[u]){ toast("Chưa tạo mã"); return; }
+      if(resetStore[u].code !== code){ toast("Mã không đúng"); return; }
+      if((newPass||"").length < 6){ toast("Mật khẩu mới tối thiểu 6 ký tự"); return; }
+
+      users[u].passHash = await sha256(newPass);
+      saveJSON(KEY.USERS, users);
+
+      delete resetStore[u];
+      saveJSON(KEY.RESET, resetStore);
+
+      toast("Đã đặt lại mật khẩu");
+      fpCode.value = ""; fpNewPass.value = "";
+      resetCodeEl.textContent = "—";
+    }
+
+    // =========================
+    // SETTINGS / CUSTOMIZATION
+    // =========================
+    function fillSettings(){
+      setShopName.value = settings.shopName || "";
+      setTagline.value = settings.tagline || "";
+      setHeroTitle.value = settings.heroTitle || "";
+      setHeroDesc.value = settings.heroDesc || "";
+      setBrand.value = settings.brand || "";
+      setCurrency.value = settings.currency || "";
+      setGridGap.value = String(settings.gridGap ?? 14);
+      setLogoText.value = settings.logoText || "S";
+
+      setLogoUrl.value = settings.logoUrl || "";
+      setBannerUrl.value = settings.bannerUrl || "";
+
+      setBankId.value = settings.bankId || "";
+      setAccNo.value = settings.accNo || "";
+      setAccName.value = settings.accName || "";
+      setOrderPrefix.value = settings.orderPrefix || "";
+      setQrTemplate.value = settings.qrTemplate || "";
+
+      setZalo.value = settings.zalo || "";
+      setTele.value = settings.telegram || "";
+      setFacebook.value = settings.facebook || "";
+      setWebsite.value = settings.website || "";
+
+      setRequireGmail.value = settings.requireGmail || "yes";
+    }
+
+    function saveSettings(){
+      settings.shopName = setShopName.value.trim() || defaults.settings.shopName;
+      settings.tagline = setTagline.value.trim() || defaults.settings.tagline;
+      settings.heroTitle = setHeroTitle.value.trim() || defaults.settings.heroTitle;
+      settings.heroDesc = setHeroDesc.value.trim() || defaults.settings.heroDesc;
+
+      settings.brand = setBrand.value.trim() || defaults.settings.brand;
+      settings.currency = setCurrency.value.trim() || defaults.settings.currency;
+
+      const gg = Number(setGridGap.value || 14);
+      settings.gridGap = Number.isFinite(gg) ? Math.max(6, Math.min(28, gg)) : 14;
+
+      settings.logoText = (setLogoText.value.trim().slice(0,1) || "S").toUpperCase();
+
+      settings.logoUrl = setLogoUrl.value.trim();
+      settings.bannerUrl = setBannerUrl.value.trim();
+
+      settings.bankId = setBankId.value.trim().toUpperCase() || defaults.settings.bankId;
+      settings.accNo = setAccNo.value.trim() || defaults.settings.accNo;
+      settings.accName = setAccName.value.trim() || defaults.settings.accName;
+      settings.orderPrefix = setOrderPrefix.value.trim() || defaults.settings.orderPrefix;
+      settings.qrTemplate = setQrTemplate.value.trim() || defaults.settings.qrTemplate;
+
+      settings.zalo = setZalo.value.trim();
+      settings.telegram = setTele.value.trim();
+      settings.facebook = setFacebook.value.trim();
+      settings.website = setWebsite.value.trim();
+
+      settings.requireGmail = setRequireGmail.value;
+
+      saveJSON(KEY.SETTINGS, settings);
+      applySettings();
+      renderProducts();
+      renderCart();
+      renderAdminProducts();
+      renderAdminOrders();
+      toast("Đã lưu cài đặt");
+    }
+
+    function seedDemo(){
+      products = defaults.products.map(p=>({ ...p, id: crypto.randomUUID() }));
+      saveJSON(KEY.PRODUCTS, products);
+      renderProducts();
+      renderAdminProducts();
+      toast("Đã nạp demo");
+    }
+
+    function wipeAll(){
+      if(confirm("Xoá toàn bộ dữ liệu demo (settings/products/cart/orders/users)?")){
+        Object.values(KEY).forEach(k=>localStorage.removeItem(k));
+        location.reload();
+      }
+    }
+
+    // =========================
+    // PRODUCT MANAGER
+    // =========================
+    function clearProductForm(){
+      editingProductId = null;
+      pTitle.value = "";
+      pPrice.value = "";
+      pTag.value = "";
+      pImage.value = "";
+      pDesc.value = "";
+    }
+
+    function saveProduct(){
+      const title = pTitle.value.trim();
+      const price = Number(pPrice.value || 0);
+      const tag = pTag.value.trim();
+      const image = pImage.value.trim();
+      const desc = pDesc.value.trim();
+
+      if(!title){ toast("Thiếu tên sản phẩm"); return; }
+      if(!Number.isFinite(price) || price < 0){ toast("Giá không hợp lệ"); return; }
+
+      if(editingProductId){
+        const idx = products.findIndex(x=>x.id===editingProductId);
+        if(idx>=0){
+          products[idx] = { ...products[idx], title, price, tag, image, desc };
+        }
+        editingProductId = null;
+        toast("Đã cập nhật");
+      }else{
+        products.push({ id: crypto.randomUUID(), title, price, tag, image, desc });
+        toast("Đã thêm");
+      }
+
+      saveJSON(KEY.PRODUCTS, products);
+      renderProducts();
+      renderAdminProducts();
+      clearProductForm();
+    }
+
+    function renderAdminProducts(){
+      const rows = products.map(p=>`
+        <tr>
+          <td>
+            <div style="font-weight:900">${escapeHtml(p.title)}</div>
+            <div class="muted" style="font-size:12px">${escapeHtml(p.desc||"")}</div>
+          </td>
+          <td class="right">${fmtMoney(p.price)}</td>
+          <td class="right">
+            <button class="btn" data-edit="${p.id}">Sửa</button>
+            <button class="btn ghost" data-del="${p.id}">Xoá</button>
+          </td>
+        </tr>
+      `).join("");
+
+      adminProductsEl.innerHTML = rows || `<tr><td colspan="3" class="muted">Chưa có sản phẩm.</td></tr>`;
+
+      adminProductsEl.querySelectorAll("[data-edit]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const id = btn.getAttribute("data-edit");
+          const p = products.find(x=>x.id===id);
+          if(!p) return;
+          editingProductId = id;
+          pTitle.value = p.title || "";
+          pPrice.value = String(p.price ?? "");
+          pTag.value = p.tag || "";
+          pImage.value = p.image || "";
+          pDesc.value = p.desc || "";
+          toast("Đang sửa sản phẩm");
+        });
+      });
+
+      adminProductsEl.querySelectorAll("[data-del]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const id = btn.getAttribute("data-del");
+          const p = products.find(x=>x.id===id);
+          if(!p) return;
+          if(confirm(`Xoá sản phẩm: ${p.title}?`)){
+            products = products.filter(x=>x.id!==id);
+            saveJSON(KEY.PRODUCTS, products);
+            if(cart[id]){ delete cart[id]; saveJSON(KEY.CART, cart); }
+            renderProducts(); renderCartBadge(); renderAdminProducts();
+            toast("Đã xoá");
+          }
+        });
+      });
+    }
+
+    function renderAdminOrders(){
+      const rows = orders.slice().reverse().map(o=>`
+        <tr>
+          <td><b>${escapeHtml(o.code)}</b><div class="muted" style="font-size:12px">${escapeHtml(o.createdAt||"")}</div></td>
+          <td>${escapeHtml(o.customer?.name||"")}<div class="muted" style="font-size:12px">${escapeHtml(o.customer?.gmail||"")}</div></td>
+          <td class="right">${fmtMoney(o.total||0)}</td>
+        </tr>
+      `).join("");
+      adminOrdersEl.innerHTML = rows || `<tr><td colspan="3" class="muted">Chưa có đơn hàng.</td></tr>`;
+    }
+
+    // =========================
+    // DRAWERS + TABS
+    // =========================
+    function openCart(){ cartDrawer.classList.add("open"); renderCart(); }
+    function closeCart(){ cartDrawer.classList.remove("open"); }
+
+    function openSettings(){
+      settingsDrawer.classList.add("open");
+      fillSettings();
+      renderAdminProducts();
+      renderAdminOrders();
+    }
+    function closeSettings(){ settingsDrawer.classList.remove("open"); }
+
+    function openAccount(){
+      accountDrawer.classList.add("open");
+      updateUserUI();
+    }
+    function closeAccount(){ accountDrawer.classList.remove("open"); }
+
+    // click outside close
+    cartDrawer.addEventListener("click", (e)=>{ if(e.target===cartDrawer) closeCart(); });
+    settingsDrawer.addEventListener("click", (e)=>{ if(e.target===settingsDrawer) closeSettings(); });
+    accountDrawer.addEventListener("click", (e)=>{ if(e.target===accountDrawer) closeAccount(); });
+
+    // Tabs
+    document.querySelectorAll(".tab").forEach(tab=>{
+      tab.addEventListener("click", ()=>{
+        const t = tab.getAttribute("data-tab");
+        document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+        tab.classList.add("active");
+
+        $("#tab_login").style.display = (t==="login") ? "block" : "none";
+        $("#tab_register").style.display = (t==="register") ? "block" : "none";
+        $("#tab_forgot").style.display = (t==="forgot") ? "block" : "none";
+      });
+    });
+
+    // =========================
+    // EVENTS
+    // =========================
+    $("#btnCart").addEventListener("click", openCart);
+    $("#btnCloseCart").addEventListener("click", closeCart);
+
+    $("#btnSettings").addEventListener("click", openSettings);
+    $("#btnCloseSettings").addEventListener("click", closeSettings);
+
+    $("#btnAccount").addEventListener("click", openAccount);
+    $("#btnCloseAccount").addEventListener("click", closeAccount);
+
+    searchEl.addEventListener("input", renderProducts);
+
+    $("#btnHot").addEventListener("click", ()=>{
+      searchEl.value = "Gói";
+      renderProducts();
+      toast("Đang lọc");
+    });
+
+    $("#btnReset").addEventListener("click", ()=>{
+      if(confirm("Reset demo sẽ xoá cài đặt, sản phẩm, giỏ, đơn, user (localStorage). Tiếp tục?")){
+        wipeAll();
+      }
+    });
+
+    $("#btnGenQR").addEventListener("click", genQR);
+    $("#btnCopyContent").addEventListener("click", async ()=>{
+      const txt = transferContentEl.textContent || "";
+      if(!txt || txt==="—"){ toast("Chưa có nội dung"); return; }
+      try{
+        await navigator.clipboard.writeText(txt);
+        toast("Đã copy nội dung CK");
+      }catch{
+        toast("Không copy được (trình duyệt chặn)");
+      }
+    });
+    $("#btnPlaceOrder").addEventListener("click", placeOrderDemo);
+
+    $("#btnSaveSettings").addEventListener("click", saveSettings);
+    $("#btnSeed").addEventListener("click", seedDemo);
+    $("#btnWipeAll").addEventListener("click", wipeAll);
+
+    $("#btnSaveProduct").addEventListener("click", saveProduct);
+    $("#btnClearProduct").addEventListener("click", clearProductForm);
+
+    $("#btnLogin").addEventListener("click", login);
+    $("#btnRegister").addEventListener("click", register);
+    $("#btnLogout").addEventListener("click", logout);
+    $("#btnWipeMe").addEventListener("click", wipeMe);
+
+    $("#btnCreateReset").addEventListener("click", createReset);
+    $("#btnResetPass").addEventListener("click", resetPass);
+
+    // =========================
+    // INIT
+    // =========================
+    applySettings();
+    renderProducts();
+    renderCartBadge();
+    renderAdminProducts();
+    renderAdminOrders();
+    updateUserUI();
+  </script>
+</body>
+</html> 
